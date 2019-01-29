@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ride/rides/ride_entity.dart';
+import 'package:ride/rides/models/ride_entity.dart';
 import 'package:ride/rides/widgets/ride_list_item.dart';
 
 class RidesList extends StatelessWidget {

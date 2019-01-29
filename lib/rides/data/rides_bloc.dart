@@ -1,9 +1,8 @@
 import 'dart:async';
 
 import 'package:ride/rides/data/rides_repository.dart';
-import 'package:ride/rides/ride_entity.dart';
+import 'package:ride/rides/models/ride_entity.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:rxdart/streams.dart';
 
 class RidesListBloc {
   // inputs
@@ -19,9 +18,7 @@ class RidesListBloc {
     final subscriptions = <StreamSubscription<dynamic>>[];
 
     final updateFilterController = BehaviorSubject<VisibilityFilter>(
-/*
-      seedValue: VisibilityFilter.all,
-*/
+      seedValue: NoFilter(),
       sync: true,
     );
 
@@ -29,7 +26,7 @@ class RidesListBloc {
 
     Observable.combineLatest2<List<RideEntity>, VisibilityFilter,
         List<RideEntity>>(
-      repo.todos,
+      repo.rides().asStream(),
       updateFilterController.stream,
       _filterRides,
     ).pipe(visibleRidesController);
@@ -49,10 +46,14 @@ class RidesListBloc {
 
   static List<RideEntity> _filterRides(
       List<RideEntity> rides, VisibilityFilter filter) {
-    return rides.where((ride) {
-      switch (filter) {
-      }
-    }).toList();
+    if (filter is NoFilter) {
+      return rides;
+    } else {
+      return rides.where((ride) {
+        ride.startTime.isInRange(filter.from, filter.to) &&
+            (ride.driver.sex == filter.sex);
+      }).toList();
+    }
   }
 
   void close() {
@@ -61,4 +62,14 @@ class RidesListBloc {
   }
 }
 
-class VisibilityFilter {}
+class VisibilityFilter {
+  final RideTime from;
+  final RideTime to;
+  final DriverSex sex;
+
+  VisibilityFilter(this.from, this.to, this.sex);
+}
+
+class NoFilter extends VisibilityFilter {
+  NoFilter() : super(RideTime(0, 0, 0), RideTime(0, 0, 0), DriverSex.FEMALE);
+}

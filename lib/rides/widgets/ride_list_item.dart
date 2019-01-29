@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ride/rides/ride_entity.dart';
+import 'package:ride/rides/models/ride_entity.dart';
 
 class RideListItem extends StatelessWidget {
   final GestureTapCallback onTap;
