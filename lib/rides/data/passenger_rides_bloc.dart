@@ -5,10 +5,9 @@ import 'package:ride/rides/data/rides_repository.dart';
 import 'package:ride/rides/models/ride_entity.dart';
 import 'package:rxdart/rxdart.dart';
 
-class RidesListBloc extends Bloc {
+class PassengerRidesBloc extends Bloc {
   // inputs
   final Sink<VisibilityFilter> updateFilter;
-  final Sink<RideEntity> addRide;
 
   // outputs
   final Stream<List<RideEntity>> rides;
@@ -16,7 +15,7 @@ class RidesListBloc extends Bloc {
   // cleanup
   final List<StreamSubscription<dynamic>> _subscriptions;
 
-  factory RidesListBloc(AbstractRideRepository repo) {
+  factory PassengerRidesBloc(AbstractRideRepository repo) {
     final subscriptions = <StreamSubscription<dynamic>>[];
 
     final updateFilterController = BehaviorSubject<VisibilityFilter>(
@@ -34,17 +33,17 @@ class RidesListBloc extends Bloc {
       _filterRides,
     ).pipe(visibleRidesController);
 
-    return RidesListBloc._(
+    return PassengerRidesBloc._(
       updateFilterController,
       visibleRidesController.stream,
       subscriptions,
     );
   }
 
-  RidesListBloc._(
+  PassengerRidesBloc._(
     this.updateFilter,
     this.rides,
-    this._subscriptions, this.addRide,
+    this._subscriptions, /*this.addRide,*/
   );
 
   static List<RideEntity> _filterRides(

@@ -1,15 +1,32 @@
 import 'package:latlong/latlong.dart';
+import 'package:ride/rides/models/seat_entity.dart';
 
 class RideEntity {
   final LatLng startLocation;
   final RideTime startTime;
   final DriverEntity driver;
   final int id;
+  List<SeatEntity> _seats;
 
-  RideEntity(this.startLocation, this.startTime, this.driver, this.id);
+  RideEntity(this.startLocation, this.startTime, this.driver, this.id) {
+    this._seats = [
+      EmptySeat(id, SeatPosition.BACK1),
+      EmptySeat(id, SeatPosition.BACK2),
+      EmptySeat(id, SeatPosition.BACK3),
+      EmptySeat(id, SeatPosition.FRONT)
+    ];
+  }
+
+  TakenSeat reserveSeat(SeatPosition position) {
+    final EmptySeat seat =
+        _seats.firstWhere((seat) => seat.position == position);
+    if (seat != null) {
+      return seat.reserve();
+    } else {
+      throw Exception("seat shouldn't be null");
+    }
+  }
 }
-
-enum DriverSex { MALE, FEMALE }
 
 class DriverEntity {
   final String name;
@@ -51,3 +68,5 @@ class RideTime {
   @override
   int get hashCode => hour.hashCode ^ minute.hashCode ^ day.hashCode;
 }
+
+enum DriverSex { MALE, FEMALE }

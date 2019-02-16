@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ride/common/bloc_provider.dart';
-import 'package:ride/rides/data/rides_bloc.dart';
+import 'package:ride/rides/data/passenger_rides_bloc.dart';
 import 'package:ride/rides/models/ride_entity.dart';
 import 'package:ride/rides/widgets/ride_list_item.dart';
 
@@ -10,7 +10,7 @@ class RidesList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<RideEntity>>(
-      stream: BlocProvider.of<RidesListBloc>(context).rides,
+      stream: BlocProvider.of<PassengerRidesBloc>(context).rides,
       builder: (context, snapshot) => snapshot.hasData
           ? _buildList(snapshot.data)
           : Container(color: Colors.red, width: 200, height: 200),
