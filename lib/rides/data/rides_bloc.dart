@@ -1,12 +1,14 @@
 import 'dart:async';
 
+import 'package:ride/common/bloc.dart';
 import 'package:ride/rides/data/rides_repository.dart';
 import 'package:ride/rides/models/ride_entity.dart';
 import 'package:rxdart/rxdart.dart';
 
-class RidesListBloc {
+class RidesListBloc extends Bloc {
   // inputs
   final Sink<VisibilityFilter> updateFilter;
+  final Sink<RideEntity> addRide;
 
   // outputs
   final Stream<List<RideEntity>> rides;
@@ -14,7 +16,7 @@ class RidesListBloc {
   // cleanup
   final List<StreamSubscription<dynamic>> _subscriptions;
 
-  factory RidesListBloc(RidesRepository repo) {
+  factory RidesListBloc(AbstractRideRepository repo) {
     final subscriptions = <StreamSubscription<dynamic>>[];
 
     final updateFilterController = BehaviorSubject<VisibilityFilter>(
@@ -22,7 +24,8 @@ class RidesListBloc {
       sync: true,
     );
 
-    final visibleRidesController = BehaviorSubject<List<RideEntity>>();
+    final visibleRidesController =
+        BehaviorSubject<List<RideEntity>>(sync: true);
 
     Observable.combineLatest2<List<RideEntity>, VisibilityFilter,
         List<RideEntity>>(
@@ -41,7 +44,7 @@ class RidesListBloc {
   RidesListBloc._(
     this.updateFilter,
     this.rides,
-    this._subscriptions,
+    this._subscriptions, this.addRide,
   );
 
   static List<RideEntity> _filterRides(
@@ -49,14 +52,16 @@ class RidesListBloc {
     if (filter is NoFilter) {
       return rides;
     } else {
-      return rides.where((ride) {
-        ride.startTime.isInRange(filter.from, filter.to) &&
-            (ride.driver.sex == filter.sex);
+      var list = rides.where((ride) {
+        return (ride.startTime.isInRange(filter.from, filter.to) &&
+            (ride.driver.sex == filter.sex));
       }).toList();
+      return list;
     }
   }
 
-  void close() {
+  @override
+  void dispose() {
     updateFilter.close();
     _subscriptions.forEach((subscription) => subscription.cancel());
   }

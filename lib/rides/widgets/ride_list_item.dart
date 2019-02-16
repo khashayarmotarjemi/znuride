@@ -12,7 +12,15 @@ class RideListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      );
+    return SizedBox(
+        width: double.infinity,
+        height: 110,
+        child:Card() );
   }
 }
+
+
+/*
+Container(child: Text(ride.startTime.hour.toString() +
+":" +
+ride.startTime.minute.toString())));*/

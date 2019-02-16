@@ -4,8 +4,9 @@ class RideEntity {
   final LatLng startLocation;
   final RideTime startTime;
   final DriverEntity driver;
+  final int id;
 
-  RideEntity(this.startLocation, this.startTime, this.driver);
+  RideEntity(this.startLocation, this.startTime, this.driver, this.id);
 }
 
 enum DriverSex { MALE, FEMALE }
