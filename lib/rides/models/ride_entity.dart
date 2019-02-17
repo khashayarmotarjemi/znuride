@@ -6,24 +6,26 @@ class RideEntity {
   final RideTime startTime;
   final DriverEntity driver;
   final int id;
-  List<SeatEntity> _seats;
+  List<SeatEntity> seats;
 
   RideEntity(this.startLocation, this.startTime, this.driver, this.id) {
-    this._seats = [
-      EmptySeat(id, SeatPosition.BACK1),
-      EmptySeat(id, SeatPosition.BACK2),
-      EmptySeat(id, SeatPosition.BACK3),
-      EmptySeat(id, SeatPosition.FRONT)
-    ];
+    this.seats =[];
+
+    seats.add(EmptySeat(id, SeatPosition.BACK));
+    seats.add(EmptySeat(id, SeatPosition.BACK));
+    seats.add(EmptySeat(id, SeatPosition.BACK));
+    seats.add(EmptySeat(id, SeatPosition.FRONT));
   }
 
-  TakenSeat reserveSeat(SeatPosition position) {
-    final EmptySeat seat =
-        _seats.firstWhere((seat) => seat.position == position);
-    if (seat != null) {
-      return seat.reserve();
+  bool reserveSeat(SeatPosition ps) {
+    EmptySeat seat = EmptySeat(id, ps);
+    if (seats.contains(seat)) {
+      seats.remove(seat);
+      seats.add(seat.reserve());
+      return true;
     } else {
-      throw Exception("seat shouldn't be null");
+      print("empty seat doesn't exist");
+      return false;
     }
   }
 }

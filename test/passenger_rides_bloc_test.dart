@@ -2,6 +2,7 @@ import 'package:latlong/latlong.dart';
 import 'package:ride/rides/data/passenger_rides_bloc.dart';
 import 'package:ride/rides/data/rides_repository.dart';
 import 'package:ride/rides/models/ride_entity.dart';
+import 'package:ride/rides/models/seat_entity.dart';
 import 'package:test_api/test_api.dart';
 import 'package:mockito/mockito.dart';
 
@@ -16,18 +17,28 @@ main() {
           DriverEntity("Ali", "09991112222", DriverSex.MALE, "11b22"), 2),
       RideEntity(LatLng(2, 2), RideTime(12, 0, 1),
           DriverEntity("Davood", "09991112222", DriverSex.MALE, "11c33"), 3),
-
     ];
 
     MockRideRepo repo = MockRideRepo();
     when(repo.rides()).thenAnswer((_) => Future.value(sampleRides));
     PassengerRidesBloc bloc = PassengerRidesBloc(repo);
-    repo.addRide( RideEntity(
+
+    /*repo.addRide( RideEntity(
         LatLng(3, 3),
         RideTime(18, 32, 1),
         DriverEntity("Fariborz", "09991112222", DriverSex.FEMALE, "11d44"),
-        4),);
+        4),);*/
 
+    test("basic reservation", () {
+      bloc.reserveSeat.add(SeatReservation(SeatPosition.BACK, sampleRides[0]));
+
+      bloc.reserveSeat.add(SeatReservation(SeatPosition.FRONT, sampleRides[0]));
+
+      bloc.rides.listen((l) {
+        print(l[0].seats.map(
+            (se) => se.position.toString() + "  " + se.runtimeType.toString()));
+      });
+    });
 
     test("basic functionality", () {
       bloc.rides.listen((list) {

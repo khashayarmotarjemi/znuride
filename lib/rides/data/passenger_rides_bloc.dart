@@ -3,11 +3,13 @@ import 'dart:async';
 import 'package:ride/common/bloc.dart';
 import 'package:ride/rides/data/rides_repository.dart';
 import 'package:ride/rides/models/ride_entity.dart';
+import 'package:ride/rides/models/seat_entity.dart';
 import 'package:rxdart/rxdart.dart';
 
 class PassengerRidesBloc extends Bloc {
   // inputs
   final Sink<VisibilityFilter> updateFilter;
+  final Sink<SeatReservation> reserveSeat;
 
   // outputs
   final Stream<List<RideEntity>> rides;
@@ -16,15 +18,21 @@ class PassengerRidesBloc extends Bloc {
   final List<StreamSubscription<dynamic>> _subscriptions;
 
   factory PassengerRidesBloc(AbstractRideRepository repo) {
-    final subscriptions = <StreamSubscription<dynamic>>[];
-
     final updateFilterController = BehaviorSubject<VisibilityFilter>(
       seedValue: NoFilter(),
       sync: true,
     );
 
+    final reservationController = StreamController<SeatReservation>(sync: true);
+
     final visibleRidesController =
         BehaviorSubject<List<RideEntity>>(sync: true);
+
+    final subscriptions = <StreamSubscription<dynamic>>[
+      reservationController.stream.listen((rsrv) {
+        rsrv.ride.reserveSeat(rsrv.position);
+      }),
+    ];
 
     Observable.combineLatest2<List<RideEntity>, VisibilityFilter,
         List<RideEntity>>(
@@ -36,6 +44,7 @@ class PassengerRidesBloc extends Bloc {
     return PassengerRidesBloc._(
       updateFilterController,
       visibleRidesController.stream,
+      reservationController,
       subscriptions,
     );
   }
@@ -43,7 +52,8 @@ class PassengerRidesBloc extends Bloc {
   PassengerRidesBloc._(
     this.updateFilter,
     this.rides,
-    this._subscriptions, /*this.addRide,*/
+    this.reserveSeat,
+    this._subscriptions,
   );
 
   static List<RideEntity> _filterRides(
