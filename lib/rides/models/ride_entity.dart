@@ -1,42 +1,37 @@
 import 'package:latlong/latlong.dart';
 import 'package:ride/rides/models/seat_entity.dart';
+import 'package:ride/rides/models/user_entity.dart';
 
 class RideEntity {
-  final LatLng startLocation;
+  final RideLocation startLocation;
+  final RideLocation endLocation;
   final RideTime startTime;
-  final DriverEntity driver;
+  final Driver driver;
   final int id;
   List<SeatEntity> seats;
 
-  RideEntity(this.startLocation, this.startTime, this.driver, this.id) {
-    this.seats =[];
+  RideEntity(this.startLocation, this.endLocation, this.startTime, this.driver,
+      this.id) {
+    this.seats = [];
 
     seats.add(EmptySeat(id, SeatPosition.BACK));
-    seats.add(EmptySeat(id, SeatPosition.BACK));
+    seats.add(TakenSeat(
+        id, SeatPosition.BACK, Passenger("aslkdjf", "234", Sex.MALE, 12)));
     seats.add(EmptySeat(id, SeatPosition.BACK));
     seats.add(EmptySeat(id, SeatPosition.FRONT));
   }
 
-  bool reserveSeat(SeatPosition ps) {
+  bool reserveSeat(Passenger passenger, SeatPosition ps) {
     EmptySeat seat = EmptySeat(id, ps);
     if (seats.contains(seat)) {
       seats.remove(seat);
-      seats.add(seat.reserve());
+      seats.add(seat.reserve(passenger));
       return true;
     } else {
       print("empty seat doesn't exist");
       return false;
     }
   }
-}
-
-class DriverEntity {
-  final String name;
-  final DriverSex sex;
-  final String phone;
-  final String carPlate;
-
-  DriverEntity(this.name, this.phone, this.sex, this.carPlate);
 }
 
 class RideTime {
@@ -71,4 +66,9 @@ class RideTime {
   int get hashCode => hour.hashCode ^ minute.hashCode ^ day.hashCode;
 }
 
-enum DriverSex { MALE, FEMALE }
+class RideLocation {
+  final String name;
+  final LatLng location;
+
+  RideLocation(this.name, this.location);
+}

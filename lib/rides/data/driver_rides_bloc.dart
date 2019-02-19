@@ -1,8 +1,10 @@
+/*
 import 'dart:async';
 
 import 'package:ride/common/bloc.dart';
 import 'package:ride/rides/data/rides_repository.dart';
 import 'package:ride/rides/models/ride_entity.dart';
+import 'package:ride/rides/models/user_entity.dart';
 import 'package:rxdart/rxdart.dart';
 
 class DriverRidesBloc extends Bloc {
@@ -43,7 +45,9 @@ class DriverRidesBloc extends Bloc {
   DriverRidesBloc._(
     this.updateFilter,
     this.rides,
-    this._subscriptions, /*this.addRide,*/
+    this._subscriptions, */
+/*this.addRide,*//*
+
   );
 
   static List<RideEntity> _filterRides(
@@ -69,11 +73,12 @@ class DriverRidesBloc extends Bloc {
 class VisibilityFilter {
   final RideTime from;
   final RideTime to;
-  final DriverSex sex;
+  final Sex sex;
 
   VisibilityFilter(this.from, this.to, this.sex);
 }
 
 class NoFilter extends VisibilityFilter {
-  NoFilter() : super(RideTime(0, 0, 0), RideTime(0, 0, 0), DriverSex.FEMALE);
+  NoFilter() : super(RideTime(0, 0, 0), RideTime(0, 0, 0), Sex.FEMALE);
 }
+*/

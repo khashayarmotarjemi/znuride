@@ -4,6 +4,7 @@ import 'package:ride/common/bloc.dart';
 import 'package:ride/rides/data/rides_repository.dart';
 import 'package:ride/rides/models/ride_entity.dart';
 import 'package:ride/rides/models/seat_entity.dart';
+import 'package:ride/rides/models/user_entity.dart';
 import 'package:rxdart/rxdart.dart';
 
 class PassengerRidesBloc extends Bloc {
@@ -30,7 +31,7 @@ class PassengerRidesBloc extends Bloc {
 
     final subscriptions = <StreamSubscription<dynamic>>[
       reservationController.stream.listen((rsrv) {
-        rsrv.ride.reserveSeat(rsrv.position);
+        rsrv.ride.reserveSeat(rsrv.passenger, rsrv.position);
       }),
     ];
 
@@ -61,6 +62,7 @@ class PassengerRidesBloc extends Bloc {
     if (filter is NoFilter) {
       return rides;
     } else {
+      // everything should go in here
       var list = rides.where((ride) {
         return (ride.startTime.isInRange(filter.from, filter.to) &&
             (ride.driver.sex == filter.sex));
@@ -79,11 +81,11 @@ class PassengerRidesBloc extends Bloc {
 class VisibilityFilter {
   final RideTime from;
   final RideTime to;
-  final DriverSex sex;
+  final Sex sex;
 
   VisibilityFilter(this.from, this.to, this.sex);
 }
 
 class NoFilter extends VisibilityFilter {
-  NoFilter() : super(RideTime(0, 0, 0), RideTime(0, 0, 0), DriverSex.FEMALE);
+  NoFilter() : super(RideTime(0, 0, 0), RideTime(0, 0, 0), Sex.FEMALE);
 }

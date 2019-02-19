@@ -1,5 +1,6 @@
 import 'package:ride/rides/models/ride_entity.dart';
 import 'package:quiver/core.dart';
+import 'package:ride/rides/models/user_entity.dart';
 
 abstract class SeatEntity {
   final int rideID;
@@ -24,13 +25,16 @@ abstract class SeatEntity {
 class EmptySeat extends SeatEntity {
   EmptySeat(int rideID, SeatPosition position) : super(rideID, position);
 
-  TakenSeat reserve() {
-    return TakenSeat(rideID, position);
+  TakenSeat reserve(Passenger passenger) {
+    return TakenSeat(rideID, position, passenger);
   }
 }
 
 class TakenSeat extends SeatEntity {
-  TakenSeat(int rideID, SeatPosition position) : super(rideID, position);
+  final Passenger passenger;
+
+  TakenSeat(int rideID, SeatPosition position, this.passenger)
+      : super(rideID, position);
 
   EmptySeat unReserve() {
     return EmptySeat(rideID, position);
@@ -39,8 +43,9 @@ class TakenSeat extends SeatEntity {
 
 class SeatReservation extends SeatEntity {
   final RideEntity ride;
+  final Passenger passenger;
 
-  SeatReservation(SeatPosition position, this.ride) : super(ride.id, position);
+  SeatReservation(SeatPosition position, this.ride, this.passenger) : super(ride.id, position);
 }
 
 enum SeatPosition { FRONT, BACK }

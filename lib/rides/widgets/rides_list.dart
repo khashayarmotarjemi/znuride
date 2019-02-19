@@ -13,7 +13,7 @@ class RidesList extends StatelessWidget {
       stream: BlocProvider.of<PassengerRidesBloc>(context).rides,
       builder: (context, snapshot) => snapshot.hasData
           ? _buildList(snapshot.data)
-          : Container(color: Colors.red, width: 200, height: 200),
+          : Container( width: 200, height: 200),
     );
   }
 
